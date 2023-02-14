@@ -15,7 +15,7 @@ const startRecording = async (req, res) => {
     }
 }
 
-startRecording({body:{container:"test",fileName:"test.mp4",streamUrl:"example.com"}})
+startRecording({body:{container:process.env.AZURE_CONTAINER_NAME,fileName:process.env.fileName,streamUrl:process.env.rtmpServerUrl}})
 .then((res)=>{
     console.log(res)
 })

@@ -7,7 +7,7 @@ Steps to stream a video using rtmp server url:
 4. npm install node-media-server
 5. vi app.js
 6. Copy the following code in app.js:
-   """
+   ```
    const NodeMediaServer = require('node-media-server');
 
     const config = {
@@ -27,7 +27,7 @@ Steps to stream a video using rtmp server url:
     var nms = new NodeMediaServer(config)
     
     nms.run();
-    """
+    ```
 6. Run: node app.js
 7. Open a new terminal
 8. cd sample-repo 
@@ -37,6 +37,7 @@ Steps to stream a video using rtmp server url:
 
 Steps to start the app:
 1. Update all the env variables in you local env file. 
+   ```
    fileName=test.mp4
    rtmpServerUrl=rtmp://localhost:1935/live/test
    AZURE_APP_ID=
@@ -44,6 +45,7 @@ Steps to start the app:
    AZURE_APP_TENANT_ID=
    AZURE_ACCOUNT_NAME=
    AZURE_CONTAINER_NAME=
+   ```
 2. npm i
 3. npm run start
 

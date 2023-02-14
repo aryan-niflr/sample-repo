@@ -7,7 +7,7 @@ Steps to stream a video using rtmp server url:
 4. npm install node-media-server
 5. vi app.js
 6. Copy the following code in app.js:
-   '''
+   ' ' '
    const NodeMediaServer = require('node-media-server');
 
     const config = {
@@ -27,7 +27,7 @@ Steps to stream a video using rtmp server url:
     var nms = new NodeMediaServer(config)
     
     nms.run();
-    '''
+    ' ' '
 6. Run: node app.js
 7. Open a new terminal
 8. cd sample-repo 

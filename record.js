@@ -1,12 +1,16 @@
 require('dotenv').config();
 const {BlobServiceClient} = require("@azure/storage-blob");
 const { ClientSecretCredential } = require("@azure/identity");
+const azure = require('azure-storage');
 const ffmpeg = require('fluent-ffmpeg');
 
 const appID = process.env.AZURE_APP_ID 
 const appSec = process.env.AZURE_APP_SEC 
 const tenantID = process.env.AZURE_TENANT_ID 
 const clientCred = new ClientSecretCredential(tenantID,appID,appSec)
+
+const key=process.env.AZURE_ACCOUNT_KEY;
+const blobService=azure.createBlobService(process.env.AZURE_ACCOUNT_NAME,key);
 
 const blobServiceClient=new BlobServiceClient(
     `https://${process.env.AZURE_ACCOUNT_NAME}.blob.core.windows.net`,
@@ -21,6 +25,7 @@ async function appendingFile(content, toBeAdded) {
       reject(new Error("Error occurred"));
     });
   }
+
 async function streamToBuffer(readableStream) {
 return new Promise((resolve, reject) => {
     const chunks = [];
@@ -34,10 +39,21 @@ return new Promise((resolve, reject) => {
 });
 }
 
+let stream = new PassThrough();
 process.on('message',async(data) => {
-    let { bucketOrContainer, fileName, streamUrl } = data
-    console.log(`About to record the video...`, data)
     try {
+        let { bucketOrContainer, fileName, streamUrl } = data
+        console.log(`About to record the video...`, data)
+        stream = await blobService.createWriteStreamToNewAppendBlob(bucketOrContainer, fileName, function(error, result, response){
+            if(!error){
+                console.log('No error');
+                console.log("result",result)
+                console.log("response",response)
+            }else{
+                console.error(error);
+            }
+          }); 
+          
         ffmpeg(streamUrl)
         .addOptions([
             '-vcodec copy',
@@ -52,7 +68,9 @@ process.on('message',async(data) => {
                 payload: data
             }))
         })
-        .on('data', async function (chunk) {
+        .pipe(stream)
+
+        /* .on('data', async function (chunk) {
             console.log(`Writing chunk of size ${chunk.length}`)
             let streaming = new PassThrough({
             highWaterMark: chunk.length
@@ -66,7 +84,7 @@ process.on('message',async(data) => {
         })
         .on('end', function () {
             console.log('Finished processing');
-        })
+        }) */
     }
     catch (err) {
         console.log(`Error during stream recording ${err.stack}`, JSON.stringify({

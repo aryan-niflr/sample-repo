@@ -45,6 +45,7 @@ Steps to start the app:
    AZURE_APP_TENANT_ID=
    AZURE_ACCOUNT_NAME=
    AZURE_CONTAINER_NAME=
+   AZURE_ACCOUNT_KEY=
    ```
 2. npm i
 3. npm run start

@@ -23,6 +23,7 @@
     "azure-storage": "^2.10.7",
     "child_process": "^1.0.2",
     "dotenv": "^16.0.3",
-    "fluent-ffmpeg": "^2.1.2"
+    "fluent-ffmpeg": "^2.1.2",
+    "nodemon": "^2.0.20"
   }
 }

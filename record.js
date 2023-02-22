@@ -1,8 +1,10 @@
-require('dotenv').config();
+console.log(process.env)
 const {BlobServiceClient} = require("@azure/storage-blob");
 const { ClientSecretCredential } = require("@azure/identity");
 const azure = require('azure-storage');
 const ffmpeg = require('fluent-ffmpeg');
+const {PassThrough} = require('stream')
+const fs = require('fs')
 
 const appID = process.env.AZURE_APP_ID 
 const appSec = process.env.AZURE_APP_SEC 
@@ -39,12 +41,13 @@ return new Promise((resolve, reject) => {
 });
 }
 
-let stream = new PassThrough();
 process.on('message',async(data) => {
+    
     try {
-        let { bucketOrContainer, fileName, streamUrl } = data
+        let { container, fileName, streamUrl } = data
+        console.log('message from', data, container, fileName);
         console.log(`About to record the video...`, data)
-        stream = await blobService.createWriteStreamToNewAppendBlob(bucketOrContainer, fileName, function(error, result, response){
+        const callback = function(error, result, response){
             if(!error){
                 console.log('No error');
                 console.log("result",result)
@@ -52,7 +55,7 @@ process.on('message',async(data) => {
             }else{
                 console.error(error);
             }
-          }); 
+          }; 
           
         ffmpeg(streamUrl)
         .addOptions([
@@ -68,7 +71,7 @@ process.on('message',async(data) => {
                 payload: data
             }))
         })
-        .pipe(stream)
+        .pipe(blobService.createWriteStreamToNewAppendBlob(container, fileName, null, callback))
 
         /* .on('data', async function (chunk) {
             console.log(`Writing chunk of size ${chunk.length}`)

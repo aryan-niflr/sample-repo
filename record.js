@@ -1,4 +1,3 @@
-console.log(process.env)
 const {BlobServiceClient} = require("@azure/storage-blob");
 const { ClientSecretCredential } = require("@azure/identity");
 const azure = require('azure-storage');

@@ -56,7 +56,7 @@ process.on('message',async(data) => {
             }
           }; 
           
-        ffmpeg(streamUrl)
+        const command = ffmpeg(streamUrl)
         .addOptions([
             '-vcodec copy',
             '-acodec copy',
@@ -70,7 +70,11 @@ process.on('message',async(data) => {
                 payload: data
             }))
         })
-        .pipe(blobService.createWriteStreamToNewAppendBlob(container, fileName, null, callback))
+        command.pipe().on('data', async function (chunk) {
+            console.log(`Writing chunk of size ${chunk.length}`)
+            blobServiceClient.getContainerClient(container).getAppendBlobClient(fileName).appendBlock(chunk.buffer, chunk.length);
+            //console.log("blockBlobResponse",blockBlobResponse)
+        })
 
         /* .on('data', async function (chunk) {
             console.log(`Writing chunk of size ${chunk.length}`)

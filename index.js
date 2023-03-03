@@ -1,4 +1,5 @@
 const {fork} = require('child_process')
+require('dotenv').config();
 
 const startRecording = async (req, res) => {
     try {
@@ -14,7 +15,6 @@ const startRecording = async (req, res) => {
         return { error: error.message }
     }
 }
-
 startRecording({body:{container:process.env.AZURE_CONTAINER_NAME,fileName:process.env.fileName,streamUrl:process.env.rtmpServerUrl}})
 .then((res)=>{
     console.log(res)
